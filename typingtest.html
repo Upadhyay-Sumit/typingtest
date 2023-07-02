@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Typing Practice</title>
+  <style>
+    /* CSS Styling */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f3f3;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #FFF;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .content {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .text-container {
+      width: 600px;
+      height: 200px;
+      border: 1px solid #DDD;
+      border-radius: 5px;
+      padding: 10px;
+      background-color: #FFF;
+      overflow-y: auto;
+    }
+
+    input[type="text"] {
+      width: 400px;
+      height: 40px;
+      font-size: 18px;
+      padding: 5px;
+      margin-top: 20px;
+    }
+
+    .stats-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      width: 400px;
+    }
+
+    p {
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Typing Practice</h1>
+    <div class="content">
+      <div class="text-container">
+        <p id="textToType"></p>
+      </div>
+      <input id="userInput" type="text" placeholder="Start typing here...">
+      <div class="stats-container">
+        <p id="wpm">Words per minute: 0</p>
+        <p id="accuracy">Accuracy: 0%</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // JavaScript Code
+    const textToTypeElement = document.getElementById("textToType");
+    const userInputElement = document.getElementById("userInput");
+    const wpmElement = document.getElementById("wpm");
+    const accuracyElement = document.getElementById("accuracy");
+
+    let textToType = "";
+    let currentWordIndex = 0;
+    let startTime = null;
+    let typedWords = 0;
+    let correctWords = 0;
+
+    function loadTextToType() {
+      // Fetch or set the text content from your text file or any other source
+      // and assign it to the 'textToType' variable
+      textToType = "This is an example sentence for typing practice.";
+      textToTypeElement.textContent = textToType;
+    }
+
+    function startTyping() {
+      userInputElement.disabled = false;
+      userInputElement.focus();
+      startTime = new Date();
+    }
+
+    function endTyping() {
+      userInputElement.disabled = true;
+      const endTime = new Date();
+      const timeDiff = (endTime - startTime) / 1000;
+      const minutes = timeDiff / 60;
+      const wpm = Math.round(typedWords / minutes);
+      const accuracy = Math.round((correctWords / typedWords) * 100) || 0;
+
+      wpmElement.textContent = `Words per minute: ${wpm}`;
+      accuracyElement.textContent = `Accuracy: ${accuracy}%`;
+    }
+
+    function handleUserInput() {
+      const typedText = userInputElement.value.trim();
+      const words = textToType.split(" ");
+      const currentWord = words[currentWordIndex];
+
+      if (typedText.endsWith(" ")) {
+        if (typedText.trim() === currentWord) {
+          correctWords++;
+        }
+        typedWords++;
+        currentWordIndex++;
+
+        if (currentWordIndex === words.length) {
+          endTyping();
+        } else {
+          textToTypeElement.textContent = words
+            .slice(currentWordIndex)
+            .join(" ");
+          userInputElement.value = "";
+        }
+      }
+    }
+
+    userInputElement.addEventListener("keydown", (event) => {
+      if (event.key === " ") {
+        event.preventDefault();
+        handleUserInput();
+      }
+    });
+
+    userInputElement.addEventListener("input", () => {
+      if (!startTime) {
+        startTyping();
+      }
+    });
+
+    loadTextToType();
+  </script>
+</body>
+</html>
